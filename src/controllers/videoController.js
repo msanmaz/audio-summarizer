@@ -1,6 +1,6 @@
-const { downloadAudio } = require('../utils/audioDownloader');
+import downloadAudio from '../utils/audioDownloader.js';
 
-const processVideo = async (req, res) => {
+export const processVideo = async (req, res) => {
     const { youtubeUrl } = req.body;
 
     try {
@@ -11,5 +11,3 @@ const processVideo = async (req, res) => {
         res.status(500).send({ error: error.message });
     }
 };
-
-module.exports = { processVideo };

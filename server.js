@@ -1,8 +1,8 @@
-const express = require('express');
-const videoRoutes = require('./src/routes/videoRoutes');
+import express, { json } from 'express';
+import videoRoutes from './src/routes/videoRoutes.js';
 
 const app = express();
-app.use(express.json());
+app.use(json());
 
 app.use('/', videoRoutes);
 

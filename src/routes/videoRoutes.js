@@ -1,8 +1,8 @@
-const express = require('express');
-const { processVideo } = require('../controllers/videoController');
+import { Router } from 'express';
+import {processVideo}  from '../controllers/videoController.js'
 
-const router = express.Router();
+const videoRoutes = Router();
 
-router.post('/process-video', processVideo);
+videoRoutes.post('/process-video', processVideo);
 
-module.exports = router;
+export default videoRoutes;
