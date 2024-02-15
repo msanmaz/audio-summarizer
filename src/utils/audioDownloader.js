@@ -1,19 +1,33 @@
 const ytdl = require('ytdl-core');
 const fs = require('fs');
 const path = require('path');
+const sanitize = require('sanitize-filename'); // Ensure to npm install sanitize-filename
 
-const downloadAudio = (youtubeUrl) => {
-    return new Promise((resolve, reject) => {
-        const output = path.resolve(__dirname, '../../output', 'audio.mp3');
+const downloadAudio = async (youtubeUrl) => {
+    try {
+        // Get video info
+        const videoInfo = await ytdl.getInfo(youtubeUrl);
+        const videoTitle = sanitize(videoInfo.videoDetails.title); // Sanitize to use as filename
 
-        const audioStream = ytdl(youtubeUrl, { quality: 'highestaudio', filter: 'audioonly' });
-        const fileStream = fs.createWriteStream(output);
+        // Define the output path using the video title
+        const output = path.resolve(__dirname, '../../output', `${videoTitle}.mp3`);
 
-        audioStream.pipe(fileStream);
+        return new Promise((resolve, reject) => {
+            const audioStream = ytdl.downloadFromInfo(videoInfo, {
+                quality: 'highestaudio',
+                filter: 'audioonly',
+            });
+            const fileStream = fs.createWriteStream(output);
 
-        fileStream.on('finish', () => resolve(output));
-        audioStream.on('error', reject);
-    });
+            audioStream.pipe(fileStream);
+
+            fileStream.on('finish', () => resolve(output));
+            audioStream.on('error', reject);
+        });
+    } catch (error) {
+        console.error('Error downloading audio:', error);
+        throw error; // Rethrow to be caught by the caller
+    }
 };
 
 module.exports = { downloadAudio };
